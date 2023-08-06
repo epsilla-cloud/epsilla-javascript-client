@@ -1,6 +1,6 @@
 {
   "name": "epsillajs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A JS library to connect Epsilla vector database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
