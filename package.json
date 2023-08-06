@@ -1,0 +1,18 @@
+{
+  "name": "epsillajs",
+  "version": "0.0.1",
+  "description": "A JS library to connect Epsilla vector database",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts"
+  },
+  "author": "Epsilla Inc",
+  "license": "GPL-3",
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "axios": "^1.4.0",
+    "typescript": "^5.1.6",
+    "@types/node": "^20.4.8"
+  }
+}
