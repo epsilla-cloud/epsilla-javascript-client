@@ -13,7 +13,7 @@
     "url": "https://github.com/epsilla-cloud/epsillaJS"
   },
   "author": "Epsilla Inc",
-  "license": "GPL-3",
+  "license": "Apache-2",
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "typescript": "^5.1.6",
