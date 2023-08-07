@@ -60,5 +60,5 @@ const query = await db.query(
 await db.dropTable('MyTable');
 
 // unload a database from memory
-await db.unloadDB('MyDB')
+await db.unloadDB('MyDB');
 ```
