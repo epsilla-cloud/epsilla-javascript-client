@@ -29,8 +29,7 @@ class EpsillaDB {
 
   private async checkNetworking() {
     try {
-      const response = await axios.get(this.baseurl, { headers: { 'Content-type': 'text/plain' }, timeout: this.timeout });
-      console.log(response);
+      const response = await axios.get(this.baseurl, { headers: this.headers, timeout: this.timeout });
       if (response.status === 200) {
         console.log(`[INFO] Connected to ${this.host}:${this.port} successfully.`);
       } else {
