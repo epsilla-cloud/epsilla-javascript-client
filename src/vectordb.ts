@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { LoadPayload } from './models';
 
 interface ClientConfig {
@@ -12,26 +12,25 @@ class EpsillaDB {
   private host: string;
   private port: number;
   private db: string | null;
-  private httpClient: AxiosInstance;
+  private baseurl: string;
+  private headers: any;
+  private timeout: number;
 
   constructor({ protocol = 'http', host = 'localhost', port = 8888 }: ClientConfig = {}) {
     this.protocol = protocol;
     this.host = host;
     this.port = port;
     this.db = null;
-
-    const baseurl = `${this.protocol}://${this.host}:${this.port}`;
-    this.httpClient = axios.create({
-      baseURL: baseurl,
-      headers: { 'Content-type': 'application/json' },
-      timeout: 10 }
-    );
+    this.baseurl = `${this.protocol}://${this.host}:${this.port}`;
+    this.headers = { 'Content-type': 'application/json' };
+    this.timeout = 10;
     this.checkNetworking();
   }
 
   private async checkNetworking() {
     try {
-      const response = await this.httpClient.get('/');
+      const response = await axios.get(this.baseurl, { headers: { 'Content-type': 'text/plain' }, timeout: this.timeout });
+      console.log(response);
       if (response.status === 200) {
         console.log(`[INFO] Connected to ${this.host}:${this.port} successfully.`);
       } else {
@@ -60,7 +59,7 @@ class EpsillaDB {
       if (walEnabled) {
         payload.walEnabled = walEnabled;
       }
-      const response = await this.httpClient.post('/api/load', payload);
+      const response = await axios.post(`${this.baseurl}/api/load`, payload, { headers: this.headers });
 
       return response.data;
     } catch (err) {
@@ -70,7 +69,7 @@ class EpsillaDB {
 
   async unloadDB(dbName: string) {
     try {
-      const response = await this.httpClient.post(`/api/${dbName}/unload`);
+      const response = await axios.post(`${this.baseurl}/api/${dbName}/unload`, { headers: this.headers });
       return response.data;
     } catch (err) {
       return (err as AxiosError).response?.data;
@@ -83,11 +82,12 @@ class EpsillaDB {
       return new Error('[ERROR] Please use_db() first!');
     }
     try {
-      const response = await this.httpClient.post(`/api/${this.db}/schema/tables`,
+      const response = await axios.post(`${this.baseurl}/api/${this.db}/schema/tables`,
         {
           name: tableName,
           fields
-        }
+        },
+        { headers: this.headers }
       );
       return response.data;
     } catch (err) {
@@ -101,11 +101,12 @@ class EpsillaDB {
       return new Error('[ERROR] Please use_db() first!');
     }
     try {
-      const response = await this.httpClient.post(`/api/${this.db}/data/insert`,
+      const response = await axios.post(`${this.baseurl}/api/${this.db}/data/insert`,
         {
           table: tableName,
           data
-        }
+        },
+        { headers: this.headers }
       );
       return response.data;
     } catch (err) {
@@ -126,7 +127,7 @@ class EpsillaDB {
       return new Error('[ERROR] Please use_db() first!');
     }
     try {
-      const response = await this.httpClient.post(`/api/${this.db}/data/query`,
+      const response = await axios.post(`${this.baseurl}/api/${this.db}/data/query`,
         {
           table: tableName,
           queryField,
@@ -134,7 +135,8 @@ class EpsillaDB {
           response: responseField,
           limit,
           withDistance
-        }
+        },
+        { headers: this.headers }
       );
       return response.data;
     } catch (err) {
@@ -148,11 +150,12 @@ class EpsillaDB {
       return new Error('[ERROR] Please use_db() first!');
     }
     try {
-      const response = await this.httpClient.post(`/api/${this.db}/data/get`,
+      const response = await axios.post(`${this.baseurl}/api/${this.db}/data/get`,
         {
           table: tableName,
           response: responseField
-        }
+        },
+        { headers: this.headers }
       );
       return response.data;
     } catch (err) {
@@ -166,7 +169,7 @@ class EpsillaDB {
       return new Error('[ERROR] Please use_db() first!');
     }
     try {
-      const response = await this.httpClient.delete(`/api/${this.db}/schema/tables/${tableName}`);
+      const response = await axios.delete(`${this.baseurl}/api/${this.db}/schema/tables/${tableName}`, { headers: this.headers });
       return response.data;
     } catch (err) {
       return (err as AxiosError).response?.data;
@@ -175,7 +178,7 @@ class EpsillaDB {
 
   async dropDB(dbName: string) {
     try {
-      const response = await this.httpClient.delete(`/api/${dbName}/drop/`);
+      const response = await axios.delete(`${this.baseurl}/api/${dbName}/drop/`, { headers: this.headers });
       return response.data;
     } catch (err) {
       return (err as AxiosError).response?.data;
