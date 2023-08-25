@@ -62,3 +62,5 @@ await db.dropTable('MyTable');
 // unload a database from memory
 await db.unloadDB('MyDB');
 ```
+
+## We love your <a href="https://forms.gle/z73ra1sGBxH9wiUR8">Feedback</a>!
