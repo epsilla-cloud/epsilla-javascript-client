@@ -1,5 +1,8 @@
-import EpsillaDB from './vectordb';
+import EpsillaDB, { ClientConfig } from './vectordb';
+import { LoadDBPayload } from './models';
 
 export {
-  EpsillaDB
+  EpsillaDB,
+  ClientConfig,
+  LoadDBPayload
 };
