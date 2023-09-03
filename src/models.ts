@@ -1,4 +1,4 @@
-export interface LoadPayload {
+export interface LoadDBPayload {
   path: string;
   name: string;
   vectorScale?: number;

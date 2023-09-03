@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
-import { LoadPayload } from './models';
+import { LoadDBPayload } from './models';
 
-interface ClientConfig {
+export interface ClientConfig {
   protocol?: string;
   host?: string;
   port?: number;
@@ -48,7 +48,7 @@ class EpsillaDB {
 
   async loadDB(dbPath: string, dbName: string, vectorScale?: number, walEnabled?: boolean) {
     try {
-      const payload: LoadPayload = {
+      const payload: LoadDBPayload = {
         name: dbName,
         path: dbPath
       };
@@ -94,6 +94,19 @@ class EpsillaDB {
     }
   }
 
+  async listTables() {
+    if (!this.db) {
+      console.error('[ERROR] Please use_db() first!');
+      return new Error('[ERROR] Please use_db() first!');
+    }
+    try {
+      const response = await axios.get(`${this.baseurl}/api/${this.db}/schema/tables/show`);
+      return response.data;
+    } catch (err) {
+      return (err as AxiosError).response?.data;
+    }
+  }
+
   async insert(tableName: string, data: any[]) {
     if (!this.db) {
       console.error('[ERROR] Please use_db() first!');
@@ -104,6 +117,25 @@ class EpsillaDB {
         {
           table: tableName,
           data
+        },
+        { headers: this.headers }
+      );
+      return response.data;
+    } catch (err) {
+      return (err as AxiosError).response?.data;
+    }
+  }
+
+  async deleteByPrimaryKeys(tableName: string, primaryKeys: string[]) {
+    if (!this.db) {
+      console.error('[ERROR] Please use_db() first!');
+      return new Error('[ERROR] Please use_db() first!');
+    }
+    try {
+      const response = await axios.post(`${this.baseurl}/api/${this.db}/data/delete`,
+        {
+          table: tableName,
+          primaryKeys
         },
         { headers: this.headers }
       );
