@@ -14,7 +14,6 @@ class EpsillaDB {
   private db: string | null;
   private baseurl: string;
   private headers: any;
-  private timeout: number;
 
   constructor({ protocol = 'http', host = 'localhost', port = 8888 }: ClientConfig = {}) {
     this.protocol = protocol;
@@ -23,23 +22,6 @@ class EpsillaDB {
     this.db = null;
     this.baseurl = `${this.protocol}://${this.host}:${this.port}`;
     this.headers = { 'Content-type': 'application/json' };
-    this.timeout = 10;
-    this.checkNetworking();
-  }
-
-  private async checkNetworking() {
-    try {
-      const response = await axios.get(this.baseurl, { headers: this.headers, timeout: this.timeout });
-      if (response.status === 200) {
-        console.log(`[INFO] Connected to ${this.host}:${this.port} successfully.`);
-      } else {
-        console.error(`[ERROR] Failed to connect to ${this.host}:${this.port}`);
-        return new Error(`[ERROR] Failed to connect to ${this.host}:${this.port}`);
-      }
-    } catch (error) {
-      console.error(`[ERROR] Failed to connect to ${this.host}:${this.port}`);
-      return new Error(`[ERROR] Failed to connect to ${this.host}:${this.port}`);
-    }
   }
 
   useDB(dbName: string) {
