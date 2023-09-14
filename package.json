@@ -1,6 +1,6 @@
 {
   "name": "epsillajs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A JS library to connect Epsilla vector database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,8 +16,8 @@
   "license": "Apache-2",
   "devDependencies": {
     "@types/axios": "^0.14.0",
-    "typescript": "^5.1.6",
-    "@types/node": "^20.4.8"
+    "@types/node": "^20.4.8",
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "axios": "^1.4.0"
