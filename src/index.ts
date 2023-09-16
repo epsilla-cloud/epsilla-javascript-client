@@ -1,8 +1,11 @@
 import EpsillaDB, { ClientConfig } from './vectordb';
-import { LoadDBPayload } from './models';
+import { LoadDBPayload, QueryPayload, QueryExtraArgsConfig, EpsillaResponse } from './models';
 
 export {
   EpsillaDB,
   ClientConfig,
-  LoadDBPayload
+  LoadDBPayload,
+  QueryPayload,
+  QueryExtraArgsConfig,
+  EpsillaResponse
 };

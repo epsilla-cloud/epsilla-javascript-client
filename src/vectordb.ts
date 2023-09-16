@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { LoadDBPayload } from './models';
+import { EpsillaResponse, LoadDBPayload, QueryExtraArgsConfig, QueryPayload } from './models';
 
 export interface ClientConfig {
   protocol?: string;
@@ -28,7 +28,12 @@ class EpsillaDB {
     this.db = dbName;
   }
 
-  async loadDB(dbPath: string, dbName: string, vectorScale?: number, walEnabled?: boolean) {
+  async loadDB(
+    dbPath: string,
+    dbName: string,
+    vectorScale?: number,
+    walEnabled?: boolean
+  ): Promise<EpsillaResponse | Error> {
     try {
       const payload: LoadDBPayload = {
         name: dbName,
@@ -44,23 +49,23 @@ class EpsillaDB {
 
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 
-  async unloadDB(dbName: string) {
+  async unloadDB(dbName: string): Promise<EpsillaResponse | Error> {
     try {
       const response = await axios.post(`${this.baseurl}/api/${dbName}/unload`, { headers: this.headers });
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 
-  async createTable(tableName: string, fields: any[]) {
+  async createTable(tableName: string, fields: any[]): Promise<EpsillaResponse | Error> {
     if (!this.db) {
-      console.error('[ERROR] Please use_db() first!');
-      return new Error('[ERROR] Please use_db() first!');
+      console.error('[ERROR] Please useDB() first!');
+      return new Error('[ERROR] Please useDB() first!');
     }
     try {
       const response = await axios.post(`${this.baseurl}/api/${this.db}/schema/tables`,
@@ -72,27 +77,27 @@ class EpsillaDB {
       );
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 
-  async listTables() {
+  async listTables(): Promise<EpsillaResponse | Error> {
     if (!this.db) {
-      console.error('[ERROR] Please use_db() first!');
-      return new Error('[ERROR] Please use_db() first!');
+      console.error('[ERROR] Please useDB() first!');
+      return new Error('[ERROR] Please useDB() first!');
     }
     try {
       const response = await axios.get(`${this.baseurl}/api/${this.db}/schema/tables/show`);
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 
-  async insert(tableName: string, data: any[]) {
+  async insert(tableName: string, data: any[]): Promise<EpsillaResponse | Error> {
     if (!this.db) {
-      console.error('[ERROR] Please use_db() first!');
-      return new Error('[ERROR] Please use_db() first!');
+      console.error('[ERROR] Please useDB() first!');
+      return new Error('[ERROR] Please useDB() first!');
     }
     try {
       const response = await axios.post(`${this.baseurl}/api/${this.db}/data/insert`,
@@ -104,14 +109,14 @@ class EpsillaDB {
       );
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 
-  async deleteByPrimaryKeys(tableName: string, primaryKeys: string[]) {
+  async deleteByPrimaryKeys(tableName: string, primaryKeys: string[]): Promise<EpsillaResponse | Error> {
     if (!this.db) {
-      console.error('[ERROR] Please use_db() first!');
-      return new Error('[ERROR] Please use_db() first!');
+      console.error('[ERROR] Please useDB() first!');
+      return new Error('[ERROR] Please useDB() first!');
     }
     try {
       const response = await axios.post(`${this.baseurl}/api/${this.db}/data/delete`,
@@ -123,7 +128,7 @@ class EpsillaDB {
       );
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 
@@ -133,34 +138,39 @@ class EpsillaDB {
     queryVector: number[],
     limit: number,
     responseField: string[] = [],
-    withDistance = false
-  ) {
+    withDistance: boolean = false,
+    extraArgs: QueryExtraArgsConfig = {}
+  ): Promise<EpsillaResponse | Error> {
     if (!this.db) {
-      console.error('[ERROR] Please use_db() first!');
-      return new Error('[ERROR] Please use_db() first!');
+      console.error('[ERROR] Please useDB() first!');
+      return new Error('[ERROR] Please useDB() first!');
     }
     try {
+      const payload: QueryPayload = {
+        table: tableName,
+        queryField,
+        queryVector,
+        response: responseField,
+        limit,
+        withDistance
+      };
+      if (extraArgs.filter) {
+        payload.filter = extraArgs.filter;
+      }
       const response = await axios.post(`${this.baseurl}/api/${this.db}/data/query`,
-        {
-          table: tableName,
-          queryField,
-          queryVector,
-          response: responseField,
-          limit,
-          withDistance
-        },
+        payload,
         { headers: this.headers }
       );
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 
-  async get(tableName: string, responseField: string[] = []) {
+  async get(tableName: string, responseField: string[] = []): Promise<EpsillaResponse | Error> {
     if (!this.db) {
-      console.error('[ERROR] Please use_db() first!');
-      return new Error('[ERROR] Please use_db() first!');
+      console.error('[ERROR] Please useDB() first!');
+      return new Error('[ERROR] Please useDB() first!');
     }
     try {
       const response = await axios.post(`${this.baseurl}/api/${this.db}/data/get`,
@@ -172,29 +182,29 @@ class EpsillaDB {
       );
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 
-  async dropTable(tableName: string) {
+  async dropTable(tableName: string): Promise<EpsillaResponse | Error> {
     if (!this.db) {
-      console.error('[ERROR] Please use_db() first!');
-      return new Error('[ERROR] Please use_db() first!');
+      console.error('[ERROR] Please useDB() first!');
+      return new Error('[ERROR] Please useDB() first!');
     }
     try {
       const response = await axios.delete(`${this.baseurl}/api/${this.db}/schema/tables/${tableName}`, { headers: this.headers });
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 
-  async dropDB(dbName: string) {
+  async dropDB(dbName: string): Promise<EpsillaResponse | Error> {
     try {
       const response = await axios.delete(`${this.baseurl}/api/${dbName}/drop/`, { headers: this.headers });
       return response.data;
     } catch (err) {
-      return (err as AxiosError).response?.data;
+      return (err as AxiosError).response?.data as EpsillaResponse;
     }
   }
 }
