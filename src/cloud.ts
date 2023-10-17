@@ -7,7 +7,7 @@ export interface CloudClientConfig {
 }
 
 const projectHost = 'https://dispatch.epsilla.com/api/v2/project/';
-const vectordbPath = 'api/v2/vectordb';
+const vectordbPath = 'api/v2/project/${projectID}/vectordb';
 /**
  * Cloud client config:
  *  - projectID: The project ID you used for your cloud client.
@@ -65,7 +65,8 @@ export class VectorDB {
   async insert(tableName: string, data: any[]): Promise<EpsillaResponse | Error> {
     this.checkConnection();
     try {
-      const response = await axios.post(`${this.host}/${vectordbPath}/${this.dbID}/data/insert`,
+      const response = await axios.post(
+        `${this.host}/${vectordbPath.replace('${projectID}', this.projectID)}/${this.dbID}/data/insert`,
         {
           table: tableName,
           data
@@ -86,7 +87,8 @@ export class VectorDB {
         ...queryCofig
       };
 
-      const response = await axios.post(`${this.host}/${vectordbPath}/${this.dbID}/data/query`,
+      const response = await axios.post(
+        `${this.host}/${vectordbPath.replace('${projectID}', this.projectID)}/${this.dbID}/data/query`,
         payload,
         { headers: this.headers }
       );
@@ -105,7 +107,8 @@ export class VectorDB {
       console.warn('[WARNING] Epsilla Cloud has not supported deleting records by non-primary keys yet.')
     }
     try {
-      const response = await axios.post(`${this.host}/${vectordbPath}/${this.dbID}/data/delete`,
+      const response = await axios.post(
+        `${this.host}/${vectordbPath.replace('${projectID}', this.projectID)}/${this.dbID}/data/delete`,
         {
           table: tableName,
           primaryKeys: config.primaryKeys
