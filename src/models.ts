@@ -37,4 +37,5 @@ export interface EpsillaResponse {
   statusCode: number;
   message: string;
   result?: any;
+  time?: number;
 }
