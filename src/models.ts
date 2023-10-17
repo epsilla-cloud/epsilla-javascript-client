@@ -19,6 +19,20 @@ export interface QueryExtraArgsConfig {
   filter?: string;
 }
 
+export interface CloudQueryConfig {
+  queryField: string;
+  queryVector: number[];
+  limit: number;
+  response?: string[];
+  filter?: string;
+  withDistance?: boolean;
+}
+
+export interface DeleteRecordsConfig {
+  primaryKeys?: (string | number)[];
+  ids?: (string | number)[];
+}
+
 export interface EpsillaResponse {
   statusCode: number;
   message: string;

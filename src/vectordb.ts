@@ -113,7 +113,7 @@ class EpsillaDB {
     }
   }
 
-  async deleteByPrimaryKeys(tableName: string, primaryKeys: string[]): Promise<EpsillaResponse | Error> {
+  async deleteByPrimaryKeys(tableName: string, primaryKeys: (string | number)[]): Promise<EpsillaResponse | Error> {
     if (!this.db) {
       console.error('[ERROR] Please useDB() first!');
       return new Error('[ERROR] Please useDB() first!');

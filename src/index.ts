@@ -1,11 +1,9 @@
+import { CloudClientConfig, EpsillaCloud, VectorDB } from './cloud';
+import { CloudQueryConfig, EpsillaResponse, LoadDBPayload, QueryExtraArgsConfig, QueryPayload } from './models';
 import EpsillaDB, { ClientConfig } from './vectordb';
-import { LoadDBPayload, QueryPayload, QueryExtraArgsConfig, EpsillaResponse } from './models';
 
 export {
-  EpsillaDB,
-  ClientConfig,
-  LoadDBPayload,
-  QueryPayload,
-  QueryExtraArgsConfig,
-  EpsillaResponse
+  ClientConfig, CloudClientConfig,
+  CloudQueryConfig, EpsillaCloud, EpsillaDB, EpsillaResponse,
+  LoadDBPayload, QueryExtraArgsConfig, QueryPayload, VectorDB
 };
