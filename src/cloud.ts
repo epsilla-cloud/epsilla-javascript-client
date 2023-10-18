@@ -103,8 +103,8 @@ export class VectorDB {
     if (!config.primaryKeys) {
       return new Error('[ERROR] Please provide primary keys to delete records!');
     }
-    if (config.ids) {
-      console.warn('[WARNING] Epsilla Cloud has not supported deleting records by non-primary keys yet.')
+    if (config.filter) {
+      console.warn('[WARNING] Epsilla Cloud has not supported deleting records with filter yet.')
     }
     try {
       const response = await axios.post(

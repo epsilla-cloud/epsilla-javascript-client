@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { EpsillaResponse, LoadDBPayload, QueryExtraArgsConfig, QueryPayload } from './models';
+import { DeleteRecordsConfig, EpsillaResponse, LoadDBPayload, QueryExtraArgsConfig, QueryPayload } from './models';
 
 export interface ClientConfig {
   protocol?: string;
@@ -123,6 +123,31 @@ class EpsillaDB {
         {
           table: tableName,
           primaryKeys
+        },
+        { headers: this.headers }
+      );
+      return response.data;
+    } catch (err) {
+      return (err as AxiosError).response?.data as EpsillaResponse;
+    }
+  }
+
+  async delete(tableName: string, config: DeleteRecordsConfig): Promise<EpsillaResponse | Error> {
+    if (!this.db) {
+      console.error('[ERROR] Please useDB() first!');
+      return new Error('[ERROR] Please useDB() first!');
+    }
+    if (!config.primaryKeys) {
+      return new Error('[ERROR] Please provide primary keys to delete records!');
+    }
+    if (config.filter) {
+      console.warn('[WARNING] Epsilla has not supported deleting records with filter yet.')
+    }
+    try {
+      const response = await axios.post(`${this.baseurl}/api/${this.db}/data/delete`,
+        {
+          table: tableName,
+          primaryKeys: config.primaryKeys
         },
         { headers: this.headers }
       );
