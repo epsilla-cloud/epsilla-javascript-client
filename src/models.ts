@@ -30,7 +30,7 @@ export interface CloudQueryConfig {
 
 export interface DeleteRecordsConfig {
   primaryKeys?: (string | number)[];
-  ids?: (string | number)[];
+  filter?: string;
 }
 
 export interface EpsillaResponse {
