@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { CloudQueryConfig, DeleteRecordsConfig, EpsillaResponse, PreviewConfig } from './models';
+import { DeleteRecordsConfig, EpsillaResponse, PreviewConfig, QueryConfig } from './models';
 
 export interface CloudClientConfig {
   projectID: string;
@@ -79,12 +79,12 @@ export class VectorDB {
     }
   }
 
-  async query(tableName: string, queryCofig: CloudQueryConfig): Promise<EpsillaResponse | Error> {
+  async query(tableName: string, queryConfig: QueryConfig): Promise<EpsillaResponse | Error> {
     this.checkConnection();
     try {
       const payload = {
         table: tableName,
-        ...queryCofig
+        ...queryConfig
       };
 
       const response = await axios.post(

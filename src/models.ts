@@ -15,11 +15,7 @@ export interface QueryPayload {
   withDistance?: boolean;
 }
 
-export interface QueryExtraArgsConfig {
-  filter?: string;
-}
-
-export interface CloudQueryConfig {
+export interface QueryConfig {
   queryField: string;
   queryVector: number[];
   limit: number;
