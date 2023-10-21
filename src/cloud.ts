@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { CloudQueryConfig, DeleteRecordsConfig, EpsillaResponse } from './models';
+import { CloudQueryConfig, DeleteRecordsConfig, EpsillaResponse, PreviewConfig } from './models';
 
 export interface CloudClientConfig {
   projectID: string;
@@ -112,6 +112,23 @@ export class VectorDB {
         {
           table: tableName,
           primaryKeys: config.primaryKeys
+        },
+        { headers: this.headers }
+      );
+      return response.data;
+    } catch (err) {
+      return (err as AxiosError).response?.data as EpsillaResponse;
+    }
+  }
+
+  async get(tableName: string, previewConfig?: PreviewConfig): Promise<EpsillaResponse | Error> {
+    this.checkConnection();
+    try {
+      const response = await axios.post(
+        `${this.host}/${vectordbPath.replace('${projectID}', this.projectID)}/${this.dbID}/data/get`,
+        {
+          table: tableName,
+          ...previewConfig
         },
         { headers: this.headers }
       );

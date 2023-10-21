@@ -29,13 +29,28 @@ export interface CloudQueryConfig {
 }
 
 export interface DeleteRecordsConfig {
-  primaryKeys?: (string | number)[];
+  primaryKeys?: string[] | number[];
   filter?: string;
 }
 
-export interface EpsillaResponse {
+export interface PreviewConfig {
+  response?: string[];
+  primaryKeys?: string[] | number[];
+  filter?: string;
+  skip?: number;
+  limit?: number;
+}
+
+export interface EpsillaBaseResponse {
   statusCode: number;
   message: string;
+}
+
+export interface EpsillaQueryResult {
+  [key: string]: string | number | boolean | number[] | Object;
+}
+
+export interface EpsillaResponse extends EpsillaBaseResponse {
   result?: any;
   time?: number;
 }
