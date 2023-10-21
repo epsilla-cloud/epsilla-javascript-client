@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { DeleteRecordsConfig, EpsillaResponse, LoadDBPayload, QueryExtraArgsConfig, QueryPayload } from './models';
+import { DeleteRecordsConfig, EpsillaResponse, LoadDBPayload, PreviewConfig, QueryExtraArgsConfig, QueryPayload } from './models';
 
 export interface ClientConfig {
   protocol?: string;
@@ -192,7 +192,7 @@ class EpsillaDB {
     }
   }
 
-  async get(tableName: string, responseField: string[] = []): Promise<EpsillaResponse | Error> {
+  async get(tableName: string, previewConfig?: PreviewConfig): Promise<EpsillaResponse | Error> {
     if (!this.db) {
       console.error('[ERROR] Please useDB() first!');
       return new Error('[ERROR] Please useDB() first!');
@@ -201,7 +201,7 @@ class EpsillaDB {
       const response = await axios.post(`${this.baseurl}/api/${this.db}/data/get`,
         {
           table: tableName,
-          response: responseField
+          ...previewConfig
         },
         { headers: this.headers }
       );
