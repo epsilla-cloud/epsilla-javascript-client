@@ -50,6 +50,8 @@ export class VectorDB {
       // Get public endpoint with project id.
       const response = await axios.get(`${projectHost}${this.projectID}/vectordb/${this.dbID}`, { headers: this.headers });
       this.host = 'https://' + response.data.result.public_endpoint;
+
+      return response.data;
     } catch (err) {
       return (err as AxiosError).response?.data as EpsillaResponse;
     }
