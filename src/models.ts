@@ -47,6 +47,6 @@ export interface EpsillaQueryResult {
 }
 
 export interface EpsillaResponse extends EpsillaBaseResponse {
-  result?: EpsillaQueryResult[];
+  result?: EpsillaQueryResult[] | string[];
   time?: number;
 }
