@@ -102,18 +102,15 @@ export class VectorDB {
 
   async delete(tableName: string, config: DeleteRecordsConfig): Promise<EpsillaResponse | Error> {
     this.checkConnection();
-    if (!config.primaryKeys) {
-      return new Error('[ERROR] Please provide primary keys to delete records!');
-    }
-    if (config.filter) {
-      console.warn('[WARNING] Epsilla Cloud has not supported deleting records with filter yet.')
+    if (!config || (!config.primaryKeys && !config.filter)) {
+      return new Error('[ERROR] Please provide primary keys or filter expression to delete records!');
     }
     try {
       const response = await axios.post(
         `${this.host}/${vectordbPath.replace('${projectID}', this.projectID)}/${this.dbID}/data/delete`,
         {
           table: tableName,
-          primaryKeys: config.primaryKeys
+          ...config
         },
         { headers: this.headers }
       );

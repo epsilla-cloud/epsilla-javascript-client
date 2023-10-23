@@ -139,17 +139,14 @@ class EpsillaDB {
       console.error('[ERROR] Please useDB() first!');
       return new Error('[ERROR] Please useDB() first!');
     }
-    if (!config.primaryKeys) {
-      return new Error('[ERROR] Please provide primary keys to delete records!');
-    }
-    if (config.filter) {
-      console.warn('[WARNING] Epsilla has not supported deleting records with filter yet.')
+    if (!config || (!config.primaryKeys && !config.filter)) {
+      return new Error('[ERROR] Please provide primary keys or filter expression to delete records!');
     }
     try {
       const response = await axios.post(`${this.baseurl}/api/${this.db}/data/delete`,
         {
           table: tableName,
-          primaryKeys: config.primaryKeys
+          ...config
         },
         { headers: this.headers }
       );
