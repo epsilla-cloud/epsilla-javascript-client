@@ -48,12 +48,12 @@ await db.insert('MyTable',
 );
 
 // search
-const query = await db.query(
-  'MyTable',
-  "Embedding", // query field
-  [0.35, 0.55, 0.47, 0.94], // query vector
-  5, // top k
-  // response fields and with distance are optional
+const query = await db.query('MyTable',
+  {
+    queryField: "Embedding",
+    queryVector: [0.35, 0.55, 0.47, 0.94],
+    limit: 5
+  } // response fields, filter and with distance are optional
 );
 
 // drop a table
