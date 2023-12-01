@@ -9,6 +9,7 @@ export interface SparseVector {
   indices: number[];
   values: number[];
 }
+
 export interface QueryPayload {
   table: string;
   queryField: string;
