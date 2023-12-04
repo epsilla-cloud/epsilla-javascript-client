@@ -43,8 +43,9 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.PAT_TOKEN }}
-          tag_prefix: ""
+          tag_prefix: "v"
           custom_tag: ${{ steps.package_version.outputs.VERSION }}
+          dry_run: false
 
       - name: Publish to npm
         run: npm publish
