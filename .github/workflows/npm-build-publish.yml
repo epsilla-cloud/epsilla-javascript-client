@@ -1,0 +1,52 @@
+name: Build and Publish to npm
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['14.x', '16.x', '20.4.0']
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Extract version from package.json
+        id: package_version
+        run: echo "::set-output name=VERSION::$(node -p "require('./package.json').version")"
+
+      - name: Check if version already published
+        run: |
+          VERSION=${{ steps.package_version.outputs.VERSION }}
+          if npm view epsillajs@$VERSION; then
+            echo "Version $VERSION already exists on npm. Please update the version."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Bump version and push tag
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.PAT_TOKEN }}
+          tag_prefix: ""
+          custom_tag: ${{ steps.package_version.outputs.VERSION }}
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
