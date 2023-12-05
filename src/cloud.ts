@@ -1,13 +1,13 @@
 import axios, { AxiosError } from 'axios';
-import { DeleteRecordsConfig, EpsillaResponse, PreviewConfig, QueryConfig } from './models';
+import { DeleteRecordsConfig, EpsillaResponse, PreviewConfig, QueryConfig, TableField } from './models';
 
 export interface CloudClientConfig {
   projectID: string;
   apiKey: string;
 }
 
-const projectHost = 'https://dispatch.epsilla.com/api/v2/project/';
-const vectordbPath = 'api/v2/project/${projectID}/vectordb';
+const projectHost = 'https://dispatch.epsilla.com/api/v3/project';
+const vectordbPath = 'api/v3/project/${projectID}/vectordb';
 /**
  * Cloud client config:
  *  - projectID: The project ID you used for your cloud client.
@@ -48,9 +48,42 @@ export class VectorDB {
   async connect() {
     try {
       // Get public endpoint with project id.
-      const response = await axios.get(`${projectHost}${this.projectID}/vectordb/${this.dbID}`, { headers: this.headers });
+      const response = await axios.get(`${projectHost}/${this.projectID}/vectordb/${this.dbID}`, { headers: this.headers });
       this.host = 'https://' + response.data.result.public_endpoint;
 
+      return response.data;
+    } catch (err) {
+      return (err as AxiosError).response?.data as EpsillaResponse;
+    }
+  }
+
+  async createTable(tableName: string, fields: TableField[]) {
+    try {
+      const response = await axios.post(
+        `${projectHost}/${this.projectID}/vectordb/${this.dbID}/table/create`,
+        {
+          table_name: tableName,
+          fields
+        },
+        { headers: this.headers }
+      );
+      return response.data;
+    } catch (err) {
+      return (err as AxiosError).response?.data as EpsillaResponse;
+    }
+  }
+
+  async dropTable(tableName: string) {
+    try {
+      const response = await axios.delete(
+        `${projectHost}/${this.projectID}/vectordb/${this.dbID}/table/delete`,
+        {
+          params: {
+            table_name: tableName
+          },
+          headers: this.headers
+        }
+      );
       return response.data;
     } catch (err) {
       return (err as AxiosError).response?.data as EpsillaResponse;
