@@ -5,6 +5,14 @@ export interface LoadDBPayload {
   walEnabled?: boolean;
 }
 
+export interface TableField {
+  name: string;
+  dataType: string;
+  primaryKey?: boolean;
+  dimensions?: number;
+  metricType?: string;
+}
+
 export interface SparseVector {
   indices: number[];
   values: number[];

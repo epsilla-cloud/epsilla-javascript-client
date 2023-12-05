@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import {
-  DeleteRecordsConfig, EpsillaResponse, LoadDBPayload, PreviewConfig, QueryConfig, QueryPayload
+  DeleteRecordsConfig, EpsillaResponse, LoadDBPayload,
+  PreviewConfig, QueryConfig, QueryPayload, TableField
 } from './models';
 
 export interface ClientConfig {
@@ -64,7 +65,7 @@ class EpsillaDB {
     }
   }
 
-  async createTable(tableName: string, fields: any[]): Promise<EpsillaResponse | Error> {
+  async createTable(tableName: string, fields: TableField[]): Promise<EpsillaResponse | Error> {
     if (!this.db) {
       console.error('[ERROR] Please useDB() first!');
       return new Error('[ERROR] Please useDB() first!');
