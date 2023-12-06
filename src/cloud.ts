@@ -6,6 +6,7 @@ export interface CloudClientConfig {
   apiKey: string;
 }
 
+const dispatchDomain = 'https://dispatch.epsilla.com';
 const projectHost = 'https://dispatch.epsilla.com/api/v3/project';
 const vectordbPath = 'api/v3/project/${projectID}/vectordb';
 /**
@@ -59,8 +60,9 @@ export class VectorDB {
 
   async createTable(tableName: string, fields: TableField[]) {
     try {
+      const domain = this.host || dispatchDomain;
       const response = await axios.post(
-        `${projectHost}/${this.projectID}/vectordb/${this.dbID}/table/create`,
+        `${domain}/api/v3/project/${this.projectID}/vectordb/${this.dbID}/table/create`,
         {
           table_name: tableName,
           fields
@@ -75,8 +77,9 @@ export class VectorDB {
 
   async dropTable(tableName: string) {
     try {
+      const domain = this.host || dispatchDomain;
       const response = await axios.delete(
-        `${projectHost}/${this.projectID}/vectordb/${this.dbID}/table/delete`,
+        `${domain}/api/v3/project/${this.projectID}/vectordb/${this.dbID}/table/delete`,
         {
           params: {
             table_name: tableName
