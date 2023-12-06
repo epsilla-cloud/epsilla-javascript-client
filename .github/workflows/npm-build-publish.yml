@@ -43,16 +43,13 @@ jobs:
         id: package_version
         run: echo "::set-output name=VERSION::$(node -p "require('./package.json').version")"
 
-      - name: Check npm view
-        run: |
-          VERSION=${{ steps.package_version.outputs.VERSION }}
-          echo "Checking version $VERSION"
-          npm view epsillajs@$VERSION
-
       - name: Check if version already published
         run: |
           VERSION=${{ steps.package_version.outputs.VERSION }}
-          if npm view epsillajs@$VERSION; then
+          echo "Checking version: $VERSION"
+          NPM_VIEW_OUTPUT=$(npm view epsillajs@$VERSION)
+          echo "npm view output: $NPM_VIEW_OUTPUT"
+          if [ -n "$NPM_VIEW_OUTPUT" ]; then
             echo "Version $VERSION already exists on npm. Please update the version."
             exit 1
           fi
