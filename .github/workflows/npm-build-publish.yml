@@ -40,17 +40,15 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Extract version from package.json
-        id: package_version
-        run: echo "::set-output name=VERSION::$(node -p "require('./package.json').version")"
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
       - name: Check if version already published
         run: |
-          VERSION=${{ steps.package_version.outputs.VERSION }}
-          echo "Checking version: $VERSION"
-          NPM_VIEW_OUTPUT=$(npm view epsillajs@$VERSION)
+          echo "Checking version: ${{ env.VERSION }}"
+          NPM_VIEW_OUTPUT=$(npm view epsillajs@${{ env.VERSION }})
           echo "npm view output: $NPM_VIEW_OUTPUT"
           if [ -n "$NPM_VIEW_OUTPUT" ]; then
-            echo "Version $VERSION already exists on npm. Please update the version."
+            echo "Version ${{ env.VERSION }} already exists on npm. Please update the version."
             exit 1
           fi
 
@@ -59,7 +57,7 @@ jobs:
         with:
           github_token: ${{ secrets.PAT_TOKEN }}
           tag_prefix: "v"
-          custom_tag: ${{ steps.package_version.outputs.VERSION }}
+          custom_tag: ${{ env.VERSION }}
           dry_run: false
 
       - name: Publish to npm
