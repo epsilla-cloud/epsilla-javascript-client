@@ -64,7 +64,7 @@ export class VectorDB {
       const response = await axios.post(
         `${domain}/api/v3/project/${this.projectID}/vectordb/${this.dbID}/table/create`,
         {
-          table_name: tableName,
+          name: tableName,
           fields
         },
         { headers: this.headers }
