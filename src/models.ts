@@ -13,6 +13,12 @@ export interface TableField {
   metricType?: string;
 }
 
+export interface Index {
+  name: string;
+  field: string;
+  model?: string;
+}
+
 export interface SparseVector {
   indices: number[];
   values: number[];
@@ -20,8 +26,10 @@ export interface SparseVector {
 
 export interface QueryPayload {
   table: string;
-  queryField: string;
-  queryVector: number[] | SparseVector;
+  query?: string;
+  queryIndex?: string;
+  queryField?: string;
+  queryVector?: number[] | SparseVector;
   limit: number;
   response?: string[];
   filter?: string;
@@ -29,8 +37,10 @@ export interface QueryPayload {
 }
 
 export interface QueryConfig {
-  queryField: string;
-  queryVector: number[] | SparseVector;
+  query?: string;
+  queryIndex?: string;
+  queryField?: string;
+  queryVector?: number[] | SparseVector;
   limit: number;
   response?: string[];
   filter?: string;

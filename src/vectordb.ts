@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import {
-  DeleteRecordsConfig, EpsillaResponse, LoadDBPayload,
+  DeleteRecordsConfig, EpsillaResponse, Index, LoadDBPayload,
   PreviewConfig, QueryConfig, QueryPayload, TableField
 } from './models';
 
@@ -8,6 +8,7 @@ export interface ClientConfig {
   protocol?: string;
   host?: string;
   port?: number;
+  headers?: { [key: string]: string };
 }
 
 class EpsillaDB {
@@ -18,13 +19,16 @@ class EpsillaDB {
   private baseurl: string;
   private headers: any;
 
-  constructor({ protocol = 'http', host = 'localhost', port = 8888 }: ClientConfig = {}) {
+  constructor({ protocol = 'http', host = 'localhost', port = 8888, headers = {} }: ClientConfig = {}) {
     this.protocol = protocol;
     this.host = host;
     this.port = port;
     this.db = null;
     this.baseurl = `${this.protocol}://${this.host}:${this.port}`;
     this.headers = { 'Content-type': 'application/json' };
+    if (headers) {
+      this.headers = { ...this.headers, ...headers };
+    }
   }
 
   useDB(dbName: string) {
@@ -65,17 +69,21 @@ class EpsillaDB {
     }
   }
 
-  async createTable(tableName: string, fields: TableField[]): Promise<EpsillaResponse | Error> {
+  async createTable(tableName: string, fields: TableField[], indices?: Index[]): Promise<EpsillaResponse | Error> {
     if (!this.db) {
       console.error('[ERROR] Please useDB() first!');
       return new Error('[ERROR] Please useDB() first!');
     }
     try {
+      let payload: any = {
+        name: tableName,
+        fields
+      };
+      if (indices) {
+        payload['indices'] = indices;
+      }
       const response = await axios.post(`${this.baseurl}/api/${this.db}/schema/tables`,
-        {
-          name: tableName,
-          fields
-        },
+        payload,
         { headers: this.headers }
       );
       return response.data;

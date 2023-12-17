@@ -1,9 +1,10 @@
 import axios, { AxiosError } from 'axios';
-import { DeleteRecordsConfig, EpsillaResponse, PreviewConfig, QueryConfig, TableField } from './models';
+import { DeleteRecordsConfig, EpsillaResponse, Index, PreviewConfig, QueryConfig, TableField } from './models';
 
 export interface CloudClientConfig {
   projectID: string;
   apiKey: string;
+  headers?: { [key: string]: string };
 }
 
 const dispatchDomain = 'https://dispatch.epsilla.com';
@@ -21,9 +22,12 @@ export class EpsillaCloud {
   projectID: string;
   headers: any;
 
-  constructor({ projectID, apiKey }: CloudClientConfig) {
+  constructor({ projectID, apiKey, headers = {} }: CloudClientConfig) {
     this.projectID = projectID;
     this.headers = { 'Content-type': 'application/json', 'X-API-KEY': apiKey };
+    if (headers) {
+      this.headers = { ...this.headers, ...headers };
+    }
   }
 }
 
@@ -58,15 +62,19 @@ export class VectorDB {
     }
   }
 
-  async createTable(tableName: string, fields: TableField[]) {
+  async createTable(tableName: string, fields: TableField[], indices?: Index[]) {
     try {
       const domain = this.host || dispatchDomain;
+      let payload: any = {
+        name: tableName,
+        fields
+      };
+      if (indices) {
+        payload['indices'] = indices;
+      }
       const response = await axios.post(
         `${domain}/api/v3/project/${this.projectID}/vectordb/${this.dbID}/table/create`,
-        {
-          name: tableName,
-          fields
-        },
+        payload,
         { headers: this.headers }
       );
       return response.data;
