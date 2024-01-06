@@ -124,6 +124,26 @@ class EpsillaDB {
     }
   }
 
+  async upsert(tableName: string, data: any[]): Promise<EpsillaResponse | Error> {
+    if (!this.db) {
+      console.error('[ERROR] Please useDB() first!');
+      return new Error('[ERROR] Please useDB() first!');
+    }
+    try {
+      const response = await axios.post(`${this.baseurl}/api/${this.db}/data/insert`,
+        {
+          table: tableName,
+          data,
+          upsert: true,
+        },
+        { headers: this.headers }
+      );
+      return response.data;
+    } catch (err) {
+      return (err as AxiosError).response?.data as EpsillaResponse;
+    }
+  }
+
   async deleteByPrimaryKeys(tableName: string, primaryKeys: (string | number)[]): Promise<EpsillaResponse | Error> {
     if (!this.db) {
       console.error('[ERROR] Please useDB() first!');
