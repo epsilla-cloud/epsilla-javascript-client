@@ -125,6 +125,24 @@ export class VectorDB {
     }
   }
 
+  async upsert(tableName: string, data: any[]): Promise<EpsillaResponse | Error> {
+    this.checkConnection();
+    try {
+      const response = await axios.post(
+        `${this.host}/${vectordbPath.replace('${projectID}', this.projectID)}/${this.dbID}/data/insert`,
+        {
+          table: tableName,
+          data,
+          upsert: true,
+        },
+        { headers: this.headers }
+      );
+      return response.data;
+    } catch (err) {
+      return (err as AxiosError).response?.data as EpsillaResponse;
+    }
+  }
+
   async query(tableName: string, queryConfig: QueryConfig): Promise<EpsillaResponse | Error> {
     this.checkConnection();
     try {
