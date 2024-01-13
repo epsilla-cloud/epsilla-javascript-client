@@ -1,3 +1,10 @@
+export interface ClientConfig {
+  protocol?: string;
+  host?: string;
+  port?: number;
+  headers?: { [key: string]: string };
+}
+
 export interface LoadDBPayload {
   path: string;
   name: string;

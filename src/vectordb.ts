@@ -1,15 +1,10 @@
 import axios, { AxiosError } from 'axios';
+
 import {
+  ClientConfig,
   DeleteRecordsConfig, EpsillaResponse, Index, LoadDBPayload,
   PreviewConfig, QueryConfig, QueryPayload, TableField
 } from './models';
-
-export interface ClientConfig {
-  protocol?: string;
-  host?: string;
-  port?: number;
-  headers?: { [key: string]: string };
-}
 
 class EpsillaDB {
   private protocol: string;
