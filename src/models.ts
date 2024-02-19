@@ -81,6 +81,24 @@ export interface EpsillaResponse extends EpsillaBaseResponse {
   time?: number;
 }
 
+export interface RetrieverConfig {
+  table: string;
+  primaryKeyField?: string;
+  queryIndex?: string;
+  queryField?: string;
+  queryVector?: number[] | SparseVector;
+  limit: number;
+  response?: string[];
+  filter?: string;
+}
+
+export interface RerankerConfig {
+  weights?: number[];
+  scaleRanges?: number[][];
+  k: number;
+  limit?: number;
+}
+
 export interface SearchEngineCandidate extends EpsillaQueryResult {
   '@id': string | number;
   '@distance': number;

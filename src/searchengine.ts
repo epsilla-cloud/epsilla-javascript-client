@@ -3,6 +3,8 @@ import {
   QueryPayload,
   SearchEngineCandidate,
   Reranker,
+  RetrieverConfig,
+  RerankerConfig,
 } from './models';
 import EpsillaDB from './vectordb';
 import { VectorDB } from './cloud';
@@ -52,7 +54,6 @@ export class VectorRetriever {
       filter: this.filter,
       withDistance: true,
     };
-
     const response = await this.dbClient.query(this.table, queryPayload);
     if (response instanceof Error) {
       throw new Error(`Failed to retrieve data from table ${this.table}: ${response.message || 'Unknown error'}`);
@@ -239,46 +240,37 @@ class SearchEngine {
     this.dbClient = dbClient;
   }
 
-  addRetriever(
-    table: string,
-    primaryKeyField: string = "ID",
-    queryIndex?: string,
-    queryField?: string,
-    queryVector?: any, // Adjust based on your vector type
-    response?: string[],
-    limit: number = 2,
-    filter: string = ''
-  ): SearchEngine {
+  addRetriever(config: RetrieverConfig): SearchEngine {
     this.reranker = undefined; // Reset reranker when a new retriever is added
     this.retrievers.push(
       new VectorRetriever(
         this.dbClient,
-        table,
-        primaryKeyField,
-        queryIndex,
-        queryField,
-        queryVector,
-        response,
-        limit,
-        filter
+        config.table,
+        config.primaryKeyField,
+        config.queryIndex,
+        config.queryField,
+        config.queryVector,
+        config.response,
+        config.limit,
+        config.filter
       )
     );
     return this;
   }
 
-  setReranker(type: string, weights?: number[], scaleRanges?: number[][], k: number = 50, limit?: number): SearchEngine {
+  setReranker(type: string, config?: RerankerConfig): SearchEngine {
     switch (type) {
       case "rrf":
       case "reciprocal_rank_fusion":
-        this.reranker = new RRFReRanker(weights, k, limit);
+        this.reranker = new RRFReRanker(config?.weights, config?.k || 50, config?.limit);
         break;
       case "rsf":
       case "relative_score_fusion":
-        this.reranker = new RelativeScoreFusionReranker(limit);
+        this.reranker = new RelativeScoreFusionReranker(config?.limit);
         break;
       case "dbsf":
       case "distribution_based_score_fusion":
-        this.reranker = new DistributionBasedScoreFusionReranker(scaleRanges, limit);
+        this.reranker = new DistributionBasedScoreFusionReranker(config?.scaleRanges, config?.limit);
         break;
       default:
         throw new Error("Invalid reranker type: " + type);
