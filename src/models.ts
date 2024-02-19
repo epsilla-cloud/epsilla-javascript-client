@@ -80,3 +80,30 @@ export interface EpsillaResponse extends EpsillaBaseResponse {
   result?: EpsillaQueryResult[] | string[];
   time?: number;
 }
+
+export interface RetrieverConfig {
+  table: string;
+  primaryKeyField?: string;
+  queryIndex?: string;
+  queryField?: string;
+  queryVector?: number[] | SparseVector;
+  limit: number;
+  response?: string[];
+  filter?: string;
+}
+
+export interface RerankerConfig {
+  weights?: number[];
+  scaleRanges?: number[][];
+  k: number;
+  limit?: number;
+}
+
+export interface SearchEngineCandidate extends EpsillaQueryResult {
+  '@id': string | number;
+  '@distance': number;
+}
+
+export interface Reranker {
+  rerank(candidates: SearchEngineCandidate[][]): Promise<SearchEngineCandidate[]>;
+}
