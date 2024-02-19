@@ -1,6 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import { DeleteRecordsConfig, EpsillaResponse, Index, PreviewConfig, QueryConfig, TableField } from './models';
 
+import SearchEngine from './searchengine';
+
 export interface CloudClientConfig {
   projectID: string;
   apiKey: string;
@@ -197,5 +199,9 @@ export class VectorDB {
     } catch (err) {
       return (err as AxiosError).response?.data as EpsillaResponse;
     }
+  }
+
+  asSearchEngine(): SearchEngine {
+    return new SearchEngine(this);
   }
 }

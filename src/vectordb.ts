@@ -6,6 +6,8 @@ import {
   PreviewConfig, QueryConfig, QueryPayload, TableField
 } from './models';
 
+import SearchEngine from './searchengine';
+
 class EpsillaDB {
   private protocol: string;
   private host: string;
@@ -239,6 +241,10 @@ class EpsillaDB {
     } catch (err) {
       return (err as AxiosError).response?.data as EpsillaResponse;
     }
+  }
+
+  asSearchEngine(): SearchEngine {
+    return new SearchEngine(this);
   }
 }
 

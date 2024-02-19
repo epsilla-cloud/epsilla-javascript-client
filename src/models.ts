@@ -80,3 +80,12 @@ export interface EpsillaResponse extends EpsillaBaseResponse {
   result?: EpsillaQueryResult[] | string[];
   time?: number;
 }
+
+export interface SearchEngineCandidate extends EpsillaQueryResult {
+  '@id': string | number;
+  '@distance': number;
+}
+
+export interface Reranker {
+  rerank(candidates: SearchEngineCandidate[][]): Promise<SearchEngineCandidate[]>;
+}
