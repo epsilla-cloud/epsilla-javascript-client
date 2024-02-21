@@ -60,6 +60,9 @@ jobs:
           custom_tag: ${{ env.VERSION }}
           dry_run: false
 
+      - name: Build
+        run: npm run build
+
       - name: Publish to npm
         run: npm publish
         env:
