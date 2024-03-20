@@ -41,6 +41,12 @@ export interface QueryPayload {
   response?: string[];
   filter?: string;
   withDistance?: boolean;
+  facets?: FacetConfig[];
+}
+
+export interface FacetConfig {
+  group?: string[];
+  aggregate?: string[];
 }
 
 export interface QueryConfig {
@@ -52,6 +58,7 @@ export interface QueryConfig {
   response?: string[];
   filter?: string;
   withDistance?: boolean;
+  facets?: FacetConfig[];
 }
 
 export interface DeleteRecordsConfig {
@@ -65,6 +72,7 @@ export interface PreviewConfig {
   filter?: string;
   skip?: number;
   limit?: number;
+  facets?: FacetConfig[];
 }
 
 export interface EpsillaBaseResponse {

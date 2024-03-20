@@ -1,13 +1,14 @@
 // VectorRetriever.ts
+import { VectorDB } from './cloud';
 import {
+  FacetConfig,
   QueryPayload,
-  SearchEngineCandidate,
   Reranker,
-  RetrieverConfig,
   RerankerConfig,
+  RetrieverConfig,
+  SearchEngineCandidate,
 } from './models';
 import EpsillaDB from './vectordb';
-import { VectorDB } from './cloud';
 
 export class VectorRetriever {
   private dbClient: EpsillaDB | VectorDB;
@@ -19,6 +20,7 @@ export class VectorRetriever {
   private response?: string[];
   private limit: number;
   private filter: string;
+  private facets?: FacetConfig[];
 
   constructor(
     dbClient: EpsillaDB | VectorDB,
@@ -30,6 +32,7 @@ export class VectorRetriever {
     response?: string[],
     limit: number = 2,
     filter: string = '',
+    facets?: FacetConfig[]
   ) {
     this.dbClient = dbClient;
     this.table = table;
@@ -40,6 +43,7 @@ export class VectorRetriever {
     this.response = response;
     this.limit = limit;
     this.filter = filter;
+    this.facets = facets;
   }
 
   async retrieve(query: string): Promise<SearchEngineCandidate[]> {
@@ -53,6 +57,7 @@ export class VectorRetriever {
       limit: this.limit,
       filter: this.filter,
       withDistance: true,
+      facets: this.facets,
     };
     const response = await this.dbClient.query(this.table, queryPayload);
     if (response instanceof Error) {
@@ -155,7 +160,7 @@ export class RelativeScoreFusionReranker implements Reranker {
         if (aggregatedScores[id]) {
           aggregatedScores[id].score += normalizedScore as number;
         } else {
-          aggregatedScores[id] = { 
+          aggregatedScores[id] = {
             candidate: list.find(candidate => candidate['@id'] === id) as SearchEngineCandidate,
             score: normalizedScore as number
           };
@@ -202,7 +207,7 @@ export class DistributionBasedScoreFusionReranker implements Reranker {
       throw new Error("The length of scaleRanges should be equal to the number of candidates lists.");
     }
 
-    const normalizedLists = candidatesLists.map((list, index) => 
+    const normalizedLists = candidatesLists.map((list, index) =>
       this.normalizeDistances(this.scaleRanges[index], list)
     );
 
