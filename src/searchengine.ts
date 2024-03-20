@@ -1,12 +1,11 @@
 // VectorRetriever.ts
 import { VectorDB } from './cloud';
 import {
-  FacetConfig,
   QueryPayload,
   Reranker,
   RerankerConfig,
   RetrieverConfig,
-  SearchEngineCandidate,
+  SearchEngineCandidate
 } from './models';
 import EpsillaDB from './vectordb';
 
@@ -20,7 +19,6 @@ export class VectorRetriever {
   private response?: string[];
   private limit: number;
   private filter: string;
-  private facets?: FacetConfig[];
 
   constructor(
     dbClient: EpsillaDB | VectorDB,
@@ -31,8 +29,7 @@ export class VectorRetriever {
     queryVector?: any,
     response?: string[],
     limit: number = 2,
-    filter: string = '',
-    facets?: FacetConfig[]
+    filter: string = ''
   ) {
     this.dbClient = dbClient;
     this.table = table;
@@ -43,7 +40,6 @@ export class VectorRetriever {
     this.response = response;
     this.limit = limit;
     this.filter = filter;
-    this.facets = facets;
   }
 
   async retrieve(query: string): Promise<SearchEngineCandidate[]> {
