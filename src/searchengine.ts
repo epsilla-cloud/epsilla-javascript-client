@@ -52,8 +52,7 @@ export class VectorRetriever {
       response: this.response,
       limit: this.limit,
       filter: this.filter,
-      withDistance: true,
-      facets: this.facets,
+      withDistance: true
     };
     const response = await this.dbClient.query(this.table, queryPayload);
     if (response instanceof Error) {

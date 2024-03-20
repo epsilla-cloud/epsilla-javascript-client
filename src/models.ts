@@ -46,7 +46,7 @@ export interface QueryPayload {
 
 export interface FacetConfig {
   group?: string[];
-  aggregate?: string[];
+  aggregate: string[];
 }
 
 export interface QueryConfig {
