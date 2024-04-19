@@ -24,6 +24,7 @@ export interface Index {
   name: string;
   field: string;
   model?: string;
+  dimensions?: number;
 }
 
 export interface SparseVector {
